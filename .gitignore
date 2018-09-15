@@ -1,0 +1,15 @@
+.idea/*
+logs/*
+*.iml
+*.class
+*.jar
+*/.idea/*
+agent/target/*
+web/target/*
+common/target/*
+integration-test/target/*
+proxy-server/target/*
+bin/
+gen/
+out/
+build/
