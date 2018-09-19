@@ -54,8 +54,8 @@ public class ProxyServerConnectHandler implements Handler<AsyncResult<NetSocket>
             // all ok now try login
             LoginMessage loginMessage = new LoginMessage();
             loginMessage.setCmd(CommonConsts.COMMAND_LOGIN);
-            loginMessage.setAccount("ccccc");
-            loginMessage.setPassword("testc");
+            loginMessage.setAccount("admin");
+            loginMessage.setPassword("admin_test");
             proxyClient.write(loginMessage);
         }else {
             logger.error("connect to proxy server failed, please retry later or connect to the admin!");

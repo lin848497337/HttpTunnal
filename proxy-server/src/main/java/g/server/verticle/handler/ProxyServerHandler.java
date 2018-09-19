@@ -58,7 +58,8 @@ public class ProxyServerHandler implements Handler<NetSocket> {
 
                     @Override
                     public boolean checkAccountAndPassword(String account, String password) {
-                        return "admin".equalsIgnoreCase(account) && "admin_test".equalsIgnoreCase(password);
+                        this.auth = "admin".equalsIgnoreCase(account) && "admin_test".equalsIgnoreCase(password);
+                        return auth;
                     }
                 };
 
