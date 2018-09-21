@@ -69,7 +69,8 @@ public class ProxyDataHandler implements IMessageHandler {
 
             BrowserMessage browserMessage = (BrowserMessage) msg;
             Map<Long,BrowserClient> clientMap = vertx.sharedData().getLocalMap("clientMap");
-            clientMap.get(browserMessage.getBrowserId()).write(Buffer.buffer(browserMessage.getData()));
+            Buffer outputData = Buffer.buffer(browserMessage.getData());
+            clientMap.get(browserMessage.getBrowserId()).write(outputData);
             vertx.eventBus().send("proxyResponse", Json.encode(msg));
         }else {
             throw new UnsupportedOperationException("not support msg type : "+msg.getClass().getName());

@@ -1,6 +1,8 @@
 package g.handler;
 
 import g.proxy.IMessageHandler;
+import g.proxy.socket.DatagramSocketWrapper;
+import g.proxy.socket.ISocketWrapper;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
 
@@ -12,11 +14,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class NetSocketHandler implements IMessageHandler {
 
-    private NetSocket netSocket;
+    private ISocketWrapper netSocket;
 
     private static AtomicInteger counter = new AtomicInteger(0);
 
-    public NetSocketHandler(NetSocket netSocket) {
+    public NetSocketHandler(ISocketWrapper netSocket) {
         this.netSocket = netSocket;
     }
 

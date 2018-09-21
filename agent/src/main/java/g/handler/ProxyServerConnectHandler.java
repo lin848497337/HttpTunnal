@@ -5,6 +5,7 @@ import g.client.ProxyClientImpl;
 import g.proxy.FilterPipeline;
 import g.proxy.filter.*;
 import g.proxy.protocol.LoginMessage;
+import g.proxy.socket.NetSocketWrapper;
 import g.util.CommonConsts;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -69,7 +70,7 @@ public class ProxyServerConnectHandler implements Handler<AsyncResult<NetSocket>
                 .addToTail(new EncodeFilter())
                 .addToTail(new EncryptFilter())
                 .addToTail(new PackageFilter())
-                .setHandler(new NetSocketHandler(proxySocket));
+                .setHandler(new NetSocketHandler(new NetSocketWrapper(proxySocket)));
 
         ProxyClient proxyClient = new ProxyClientImpl(outputToProxyPipeline);
         return proxyClient;

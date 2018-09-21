@@ -1,6 +1,6 @@
 package g;
 
-import g.server.AgentServer;
+import g.server.UDPAgentServer;
 import io.vertx.core.Vertx;
 
 /**
@@ -22,7 +22,8 @@ public class AgentMain {
             return;
         }
         Vertx vertx = Vertx.vertx();
-        vertx.deployVerticle(new AgentServer(agentPort, proxyUrl, proxyPort));
-        vertx.deployVerticle(new StaticsUnit());
+//        vertx.deployVerticle(new AgentServer(agentPort, proxyUrl, proxyPort));
+        vertx.deployVerticle(new UDPAgentServer(agentPort, proxyUrl, proxyPort));
+//        vertx.deployVerticle(new StaticsUnit());
     }
 }

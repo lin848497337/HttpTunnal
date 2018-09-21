@@ -53,15 +53,16 @@ public class AgentMessageAction implements MessageAction {
                         responseMessage.setToken("aaaaa");
                         try {
                             agentClient.write(responseMessage);
+                            logger.error("response login success success! "+lm.getAccount());
                         } catch (Exception e) {
-                            logger.error("response login success failed!");
+                            logger.error("response login success failed!" + lm.getAccount());
                             try {
                                 agentClient.close();
                             } catch (Exception e1) {
                             }
                         }
                     }else {
-                        responseMessage.setMsg("account or password incorrect!");
+                        responseMessage.setMsg("account or password incorrect! "+lm.getAccount());
                         responseMessage.setResult((byte) 0);
                         responseMessage.setToken("");
                         try {
@@ -95,6 +96,7 @@ public class AgentMessageAction implements MessageAction {
             // 客户端与real server 交换数据
             BrowserMessage browserMessage = (BrowserMessage) msg;
             BrowserClient client = clientMap.get(browserMessage.getBrowserId());
+            System.out.println(" **************  agent send   ******************  ");
             if (client == null){
                 client = new BrowserClient(vertx, agentClient, browserMessage.getBrowserId());
                 HttpMessageHeader header = HttpMessageHeader.buildFromBuffer(Buffer.buffer(((BrowserMessage) msg).getData()));

@@ -7,6 +7,7 @@ import g.proxy.filter.EncryptFilter;
 import g.proxy.filter.IFilter;
 import g.proxy.filter.PackageFilter;
 import g.proxy.protocol.Message;
+import g.proxy.socket.ISocketWrapper;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
 
@@ -18,9 +19,9 @@ public abstract class AbstractAgentClient implements AgentClient , IFilter{
 
     private FilterPipeline agentPipeline;
 
-    private NetSocket agentSocket;
+    private ISocketWrapper agentSocket;
 
-    public AbstractAgentClient(NetSocket agentSocket) {
+    public AbstractAgentClient(ISocketWrapper agentSocket) {
         this.agentSocket = agentSocket;
         this.agentPipeline = new FilterPipeline()
                 .addToTail(new EncodeFilter())

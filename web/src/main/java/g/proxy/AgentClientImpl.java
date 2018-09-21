@@ -1,6 +1,7 @@
 package g.proxy;
 
 import g.model.UserDO;
+import g.proxy.socket.ISocketWrapper;
 import g.server.agent.AbstractAgentClient;
 import g.service.UserService;
 import g.util.SpringApplicationHolder;
@@ -14,7 +15,7 @@ public class AgentClientImpl extends AbstractAgentClient{
 
     private boolean isAuth = false;
 
-    public AgentClientImpl(NetSocket agentSocket) {
+    public AgentClientImpl(ISocketWrapper agentSocket) {
         super(agentSocket);
     }
 
