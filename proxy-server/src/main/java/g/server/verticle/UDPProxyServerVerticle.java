@@ -34,7 +34,7 @@ public class UDPProxyServerVerticle extends AbstractVerticle {
         DatagramSocket socket = vertx.createDatagramSocket(new DatagramSocketOptions());
         Vertx vertx = getVertx();
         HASocket server = new HASocket(socket);
-        server.acceptHandler(new UDPProxyServerHandler(vertx, agentClientClass, socket));
+        server.acceptHandler(new UDPProxyServerHandler(vertx, agentClientClass));
         server.listen(port);
     }
 

@@ -40,22 +40,18 @@ public class UDPProxyServerHandler implements Handler<HASocket> {
 
     private Class<? extends AgentClient> agentClass;
 
-    private Map<SocketAddress, DatagramSocketWrapper> wrapperMap = new HashMap<>();
 
-    private DatagramSocket datagramSocket;
-
-    public UDPProxyServerHandler(Vertx vertx, Class<? extends AgentClient> agentClass, DatagramSocket datagramSocket){
+    public UDPProxyServerHandler(Vertx vertx, Class<? extends AgentClient> agentClass){
         this.vertx = vertx;
         this.agentClass = agentClass;
-        this.datagramSocket = datagramSocket;
     }
 
     @Override
-    public void handle(HASocket packet) {
+    public void handle(HASocket socket) {
         try {
             // 写回agent 管线
 
-            HASocketWrapper wrapper = new HASocketWrapper(packet);
+            HASocketWrapper wrapper = new HASocketWrapper(socket);
             // 代表agent
             AgentClient agentClient;
 
@@ -85,7 +81,8 @@ public class UDPProxyServerHandler implements Handler<HASocket> {
             MessageAction action = new AgentMessageAction(vertx);
 
             // agent 写入管线
-            FilterPipeline inputPipeline = new FilterPipeline().addToTail(new UnpackFilter())
+            FilterPipeline inputPipeline = new FilterPipeline()
+                    .addToTail(new UnpackFilter())
                     .addToTail(new DecryptFilter())
                     .addToTail(new DecodeFilter())
                     .setHandler(msg -> action.process((Message) msg, agentClient));

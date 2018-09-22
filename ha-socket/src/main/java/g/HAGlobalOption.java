@@ -8,11 +8,11 @@ public class HAGlobalOption {
 
     private HAMode haMode = HAMode.PERIODIC;
 
-    private long rto = 1000;
+    private long rto = 5000;
 
-    private int maxPacketDataSize = 500;
+    private int maxPacketDataSize = 485;
 
-    private int ttl = 5;
+    private int ttl = 10;
 
     public int getTtl() {
         return ttl;

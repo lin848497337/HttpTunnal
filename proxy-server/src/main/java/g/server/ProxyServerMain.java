@@ -16,8 +16,8 @@ public class ProxyServerMain {
         int proxyPort = 8000;
         Vertx vertx = Vertx.vertx();
         VertxContext.init(vertx, new HAGlobalOption());
-//        vertx.deployVerticle(new ProxyServerVerticle(proxyPort, null));
-        vertx.deployVerticle(new UDPProxyServerVerticle(proxyPort, null));
+        vertx.deployVerticle(new ProxyServerVerticle(proxyPort, null));
+//        vertx.deployVerticle(new UDPProxyServerVerticle(proxyPort, null));
 //        vertx.deployVerticle(new StaticsUnitVerticle());
     }
 }

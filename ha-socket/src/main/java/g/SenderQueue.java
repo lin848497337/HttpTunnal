@@ -3,6 +3,7 @@ package g;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import g.exception.CloseSocketException;
 import io.vertx.core.Handler;
@@ -21,7 +22,7 @@ public class SenderQueue implements Handler<Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(SenderQueue.class);
 
-    private Map<Long, Map<Short, DataPacket>> cache = new HashMap<>();
+    private Map<Long, Map<Short, DataPacket>> cache = new ConcurrentHashMap<>();
 
     private long timerId = -1;
 
@@ -63,6 +64,11 @@ public class SenderQueue implements Handler<Long> {
         Map<Short, DataPacket> map = cache.get(packet.getSequence());
         if (map != null) {
             map.remove(packet.getSubSequence());
+            if (map.isEmpty()){
+                cache.remove(packet.getSequence());
+            }
+        }else{
+            logger.error("duplicate ack : "+packet);
         }
     }
 
@@ -73,7 +79,7 @@ public class SenderQueue implements Handler<Long> {
     private void cacheData(DataPacket packet) {
         Map<Short, DataPacket> map = cache.get(packet.getSequence());
         if (map == null) {
-            map = new HashMap<>();
+            map = new ConcurrentHashMap<>();
             cache.put(packet.getSequence(), map);
         }
         map.put(packet.getSubSequence(), packet);
@@ -134,6 +140,7 @@ public class SenderQueue implements Handler<Long> {
             pos = pos + appendSize;
             subSeq++;
         }
+        logger.error(" split data size : "+ packetSize + " data list : "+ --subSeq);
         doSend(seq, (short) -1);
     }
 

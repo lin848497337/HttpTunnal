@@ -31,14 +31,21 @@ public class HASocket {
 
     private long timerId = -1;
 
+    private boolean accept;
+
     private static final Logger logger = LoggerFactory.getLogger(HASocket.class);
 
     public HASocket(DatagramSocket socket) {
-        this(socket, null, -1);
+        this(socket, null, -1, false);
     }
 
     public HASocket(DatagramSocket socket, String targetIp, int port) {
+        this(socket, targetIp, port, false);
+    }
+
+    public HASocket(DatagramSocket socket, String targetIp, int port, boolean accept) {
         this.socket = socket;
+        this.accept = accept;
         if (targetIp == null || targetIp.length() == 0 || port <= 0){
             return;
         }
@@ -53,19 +60,28 @@ public class HASocket {
 
     public void handler(Handler<Buffer> handler){
         receiveBuffer.handler(handler);
-        socket.handler(packet->{
-            try {
-                receiveData(packet.data());
-            } catch (Exception e) {
-                logger.error("receive data error!" , e);
-            }
-        });
+        if (!accept){
+            socket.handler(packet->{
+                try {
+                    receiveData(packet.data());
+                } catch (Exception e) {
+                    logger.error("receive data error!" , e);
+                }
+            });
+        }
 
     }
 
     private void receiveData(Buffer buffer) throws Exception {
-        DataPacket packet = new DataPacket(DataPacket.DATA_TYPE_DATA);
+        if (isClose()){
+            throw new CloseSocketException();
+        }
+        DataPacket packet = new DataPacket();
         packet.unpacket(buffer);
+        if (!packet.isValid()){
+            logger.error("packet size not match!");
+            return;
+        }
         if (packet.isACK()){
             this.sendBuffer.ack(packet);
         }else{
@@ -76,6 +92,9 @@ public class HASocket {
     }
 
     public void write(Buffer buffer) throws Exception {
+        if (isClose()){
+            throw new CloseSocketException();
+        }
         sendBuffer.send(buffer);
     }
 
@@ -99,7 +118,7 @@ public class HASocket {
             SocketAddress socketAddress = packet.sender();
             HASocket haSocket = socketMap.get(socketAddress);
             if (haSocket == null){
-                haSocket = new HASocket(socket, socketAddress.host(), socketAddress.port());
+                haSocket = new HASocket(socket, socketAddress.host(), socketAddress.port(), true);
                 socketMap.put(socketAddress, haSocket);
                 haSocketHandler.handle(haSocket);
             }

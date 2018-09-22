@@ -19,6 +19,8 @@ public class DataPacket {
     private long timestamp;
     private int sendCounter = 0;
 
+    private boolean valid = true;
+
     public DataPacket(byte dataType) {
         this.dataType = dataType;
     }
@@ -54,7 +56,15 @@ public class DataPacket {
         }
         packetSize = buffer.getShort(11);
         dataLength = buffer.getShort(13);
+        if (dataLength != buffer.length()){
+            valid = false;
+            return ;
+        }
         data = buffer.getBuffer(15, dataLength);
+    }
+
+    public boolean isValid() {
+        return valid;
     }
 
     public long getSequence() {

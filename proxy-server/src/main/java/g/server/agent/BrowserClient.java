@@ -69,9 +69,10 @@ public class BrowserClient {
                 }
                 _socket.handler(buffer->{
                     Message message = buildMsgMessage(buffer.getBytes());
+                    logger.error(" response from real server size : "+buffer.length());
                     try {
                         agentClient.write(message);
-                    } catch (Exception e) {
+                    } catch  (Exception e) {
                         logger.error("response to agent error: ", e);
                         try {
                             agentClient.close();

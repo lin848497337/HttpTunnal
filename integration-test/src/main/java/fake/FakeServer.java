@@ -23,7 +23,7 @@ public class FakeServer {
         NetServer netServer = vertx.createNetServer();
         netServer.connectHandler(netSocket -> {
            netSocket.handler(buffer -> {
-                netSocket.write(msg + buffer.toString());
+                netSocket.write(msg);
            });
         });
         netServer.listen(port, result->{

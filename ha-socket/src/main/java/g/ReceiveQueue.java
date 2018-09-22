@@ -1,7 +1,10 @@
 package g;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
@@ -14,9 +17,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ReceiveQueue{
 
-    private Map<Long, Map<Short, DataPacket>> cache = new HashMap<>();
+    private Map<Long, Map<Short, DataPacket>> cache = new ConcurrentHashMap<>();
 
-    private long avaliableSequence = 0;
+    private Set<Long> duplicateCheckSet = new HashSet<>();
 
     private Handler<Buffer> handler;
 
@@ -27,20 +30,21 @@ public class ReceiveQueue{
             throw new RuntimeException("can not save ack msg!");
         }
         long sequence = packet.getSequence();
-        if (sequence <= avaliableSequence){
+        if (duplicateCheckSet.contains(sequence)){
             logger.warn("duplicate receive package sequence : "+ sequence);
             return;
         }
 
         Map<Short, DataPacket> map = cache.get(sequence);
         if (map == null) {
-            map = new HashMap<>();
+            map = new ConcurrentHashMap<>();
             cache.put(sequence, map);
         }
         map.put(packet.getSubSequence(), packet);
         boolean isFull = packet.getPacketSize() == map.size();
         if (isFull){
             Buffer allData = mergeBuffer(sequence);
+            duplicateCheckSet.add(sequence);
             if (this.handler != null){
                 this.handler.handle(allData);
             }
@@ -59,6 +63,7 @@ public class ReceiveQueue{
             DataPacket packet = map.get(i);
             buffer.appendBuffer(packet.getData());
         }
+        logger.error(" merge data size : "+size + " packet size : "+ map.get((short)1).getPacketSize());
         return buffer;
     }
 

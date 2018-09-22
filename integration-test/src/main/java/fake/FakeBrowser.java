@@ -17,12 +17,14 @@ public class FakeBrowser {
     private NetSocket agentSocket;
     private static AtomicInteger numeber = new AtomicInteger(0);
     private int curNum;
+    private String testMsg;
 
-    public FakeBrowser(String msg, int agentPort, Vertx vertx) {
+    public FakeBrowser(String msg, int agentPort, Vertx vertx, String testMsg) {
         this.msg = msg;
         this.agentPort = agentPort;
         this.vertx = vertx;
         this.curNum = numeber.addAndGet(1);
+        this.testMsg = testMsg;
     }
 
     public void connect(){
@@ -31,7 +33,10 @@ public class FakeBrowser {
             if (connectResult.succeeded()){
                 agentSocket = connectResult.result();
                 agentSocket.handler(buffer->{
-                    System.out.println("receive eq send : "+(buffer.toString().equalsIgnoreCase("i am real server" + msg + curNum)) + " "+curNum);
+                    System.out.println("receive eq send : "
+                                       +(buffer.toString().
+                            equalsIgnoreCase(testMsg + curNum))
+                                       + " "+curNum);
                 });
                 System.out.println("connect success "+curNum);
                 agentSocket.write(msg + curNum);
