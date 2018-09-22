@@ -1,5 +1,6 @@
 package g.server;
 
+import g.HASocket;
 import g.client.ProxyClient;
 import g.client.ProxyClientImpl;
 import g.handler.NetSocketHandler;
@@ -9,6 +10,7 @@ import g.proxy.FilterPipeline;
 import g.proxy.filter.*;
 import g.proxy.protocol.LoginMessage;
 import g.proxy.socket.DatagramSocketWrapper;
+import g.proxy.socket.HASocketWrapper;
 import g.proxy.socket.ISocketWrapper;
 import g.util.CommonConsts;
 import io.vertx.core.Vertx;
@@ -44,8 +46,10 @@ public class UDPAgentServer extends AbstractVerticle {
     public void start() throws Exception {
         Vertx vertx = getVertx();
         logger.info("init agent server !");
-        DatagramSocket proxySocket = vertx.createDatagramSocket();
-        DatagramSocketWrapper socketWrapper = new DatagramSocketWrapper(proxyServerIp, proxyServerPort, proxySocket, vertx);
+        HASocket proxySocket = new HASocket(vertx.createDatagramSocket(), proxyServerIp, proxyServerPort);
+
+//        DatagramSocketWrapper socketWrapper = new DatagramSocketWrapper(proxyServerIp, proxyServerPort, proxySocket, vertx);
+        HASocketWrapper socketWrapper = new HASocketWrapper(proxySocket);
         ProxyClient proxyClient = initProxyClient(socketWrapper);
 
         FilterPipeline proxyReadPipeline = new FilterPipeline()
@@ -56,9 +60,6 @@ public class UDPAgentServer extends AbstractVerticle {
 
         socketWrapper.handler(new PiplineReadHandler(proxyReadPipeline));
 
-        proxySocket.handler(packet->{
-            socketWrapper.receivePacket(packet);
-        });
 
         logger.info("try to login");
         // all ok now try login

@@ -2,6 +2,8 @@ package test;
 
 import fake.FakeBrowser;
 import fake.FakeServer;
+import g.HAGlobalOption;
+import g.VertxContext;
 import g.server.AgentServer;
 import g.server.UDPAgentServer;
 import g.server.verticle.ProxyServerVerticle;
@@ -16,6 +18,7 @@ public class FunctionTest {
 
 
     public static void main(String args[]) throws InterruptedException {
+        VertxContext.init(Vertx.vertx(), new HAGlobalOption());
         FakeServer fakeServer = new FakeServer("i am real server" , 6666, Vertx.vertx());
         fakeServer.listen();
         Thread.sleep(3000L);

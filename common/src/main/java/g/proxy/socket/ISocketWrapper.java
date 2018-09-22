@@ -8,7 +8,7 @@ import io.vertx.core.buffer.Buffer;
  * @since 1.0.25
  */
 public interface ISocketWrapper {
-    void write(Buffer buffer);
+    void write(Buffer buffer) throws Exception;
     void close();
     void handler(Handler<Buffer> bufferHandler);
 }

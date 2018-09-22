@@ -14,6 +14,7 @@
         <module>agent</module>
         <module>proxy-server</module>
         <module>integration-test</module>
+        <module>ha-socket</module>
     </modules>
 
     <repositories>

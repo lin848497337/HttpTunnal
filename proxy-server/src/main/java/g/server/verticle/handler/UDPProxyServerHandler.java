@@ -1,16 +1,20 @@
 package g.server.verticle.handler;
 
+import g.HASocket;
 import g.proxy.FilterPipeline;
 import g.proxy.filter.DecodeFilter;
 import g.proxy.filter.DecryptFilter;
 import g.proxy.filter.UnpackFilter;
 import g.proxy.protocol.Message;
 import g.proxy.socket.DatagramSocketWrapper;
+import g.proxy.socket.HASocketWrapper;
 import g.proxy.socket.ISocketWrapper;
+import g.proxy.socket.NetSocketWrapper;
 import g.server.agent.AbstractAgentClient;
 import g.server.message.AgentMessageAction;
 import g.server.message.MessageAction;
 import io.vertx.core.datagram.DatagramSocket;
+import io.vertx.core.net.NetSocket;
 import io.vertx.core.net.SocketAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +32,7 @@ import java.util.Map;
  * @author chengjin.lyf on 2018/9/20 上午7:34
  * @since 1.0.25
  */
-public class UDPProxyServerHandler implements Handler<DatagramPacket> {
+public class UDPProxyServerHandler implements Handler<HASocket> {
 
     private static final Logger logger = LoggerFactory.getLogger(UDPProxyServerHandler.class);
 
@@ -38,28 +42,20 @@ public class UDPProxyServerHandler implements Handler<DatagramPacket> {
 
     private Map<SocketAddress, DatagramSocketWrapper> wrapperMap = new HashMap<>();
 
-    public UDPProxyServerHandler(Vertx vertx, Class<? extends AgentClient> agentClass){
+    private DatagramSocket datagramSocket;
+
+    public UDPProxyServerHandler(Vertx vertx, Class<? extends AgentClient> agentClass, DatagramSocket datagramSocket){
         this.vertx = vertx;
         this.agentClass = agentClass;
+        this.datagramSocket = datagramSocket;
     }
 
     @Override
-    public void handle(DatagramPacket packet) {
+    public void handle(HASocket packet) {
         try {
             // 写回agent 管线
 
-
-            SocketAddress socketAddress = packet.sender();
-            DatagramSocketWrapper wrapper = wrapperMap.get(socketAddress);
-            if (wrapper == null){
-                DatagramSocket agentSocket = vertx.createDatagramSocket();
-                wrapper = new DatagramSocketWrapper(socketAddress.host(), socketAddress.port(), agentSocket, vertx);
-                wrapperMap.put(socketAddress, wrapper);
-            }else{
-                wrapper.receivePacket(packet);
-                return;
-            }
-
+            HASocketWrapper wrapper = new HASocketWrapper(packet);
             // 代表agent
             AgentClient agentClient;
 
@@ -81,7 +77,7 @@ public class UDPProxyServerHandler implements Handler<DatagramPacket> {
                 };
 
             }else {
-                Constructor<? extends AgentClient> constructor = agentClass.getConstructor(ISocketWrapper.class);
+                Constructor<? extends AgentClient> constructor = agentClass.getConstructor(NetSocket.class);
                 agentClient = constructor.newInstance(wrapper);
             }
 
@@ -101,7 +97,6 @@ public class UDPProxyServerHandler implements Handler<DatagramPacket> {
                     logger.error("do read failed", e);
                 }
             });
-            wrapper.receivePacket(packet);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

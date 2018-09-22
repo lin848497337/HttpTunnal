@@ -96,7 +96,6 @@ public class AgentMessageAction implements MessageAction {
             // 客户端与real server 交换数据
             BrowserMessage browserMessage = (BrowserMessage) msg;
             BrowserClient client = clientMap.get(browserMessage.getBrowserId());
-            System.out.println(" **************  agent send   ******************  ");
             if (client == null){
                 client = new BrowserClient(vertx, agentClient, browserMessage.getBrowserId());
                 HttpMessageHeader header = HttpMessageHeader.buildFromBuffer(Buffer.buffer(((BrowserMessage) msg).getData()));

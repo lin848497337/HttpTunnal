@@ -22,6 +22,7 @@ public class AgentMain {
             return;
         }
         Vertx vertx = Vertx.vertx();
+        VertxContext.init(vertx, new HAGlobalOption());
 //        vertx.deployVerticle(new AgentServer(agentPort, proxyUrl, proxyPort));
         vertx.deployVerticle(new UDPAgentServer(agentPort, proxyUrl, proxyPort));
 //        vertx.deployVerticle(new StaticsUnit());

@@ -1,8 +1,11 @@
 package g.server.verticle;
 
+import g.HASocket;
 import g.server.agent.AbstractAgentClient;
+import g.server.verticle.handler.ProxyServerHandler;
 import g.server.verticle.handler.UDPProxyServerHandler;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Vertx;
 import io.vertx.core.datagram.DatagramSocket;
 import io.vertx.core.datagram.DatagramSocketOptions;
 import io.vertx.core.net.NetSocket;
@@ -29,15 +32,10 @@ public class UDPProxyServerVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
         DatagramSocket socket = vertx.createDatagramSocket(new DatagramSocketOptions());
-        socket.listen(port, "0.0.0.0", result->{
-            if (result.succeeded()){
-                logger.info("start udp socket @ "+port+" success!");
-                socket.handler(new UDPProxyServerHandler(vertx, agentClientClass));
-            }else{
-                logger.info("start udp socket @ "+port+" failed!"+result.cause());
-                System.exit(1);
-            }
-        });
+        Vertx vertx = getVertx();
+        HASocket server = new HASocket(socket);
+        server.acceptHandler(new UDPProxyServerHandler(vertx, agentClientClass, socket));
+        server.listen(port);
     }
 
     @Override
