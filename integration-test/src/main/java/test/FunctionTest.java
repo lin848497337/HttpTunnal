@@ -5,9 +5,7 @@ import fake.FakeServer;
 import g.HAGlobalOption;
 import g.VertxContext;
 import g.server.AgentServer;
-import g.server.UDPAgentServer;
 import g.server.verticle.ProxyServerVerticle;
-import g.server.verticle.UDPProxyServerVerticle;
 import io.vertx.core.Vertx;
 
 /**
@@ -35,12 +33,10 @@ public class FunctionTest {
         FakeServer fakeServer = new FakeServer(response , 6666, Vertx.vertx());
         fakeServer.listen();
         Thread.sleep(3000L);
-//        Vertx.vertx().deployVerticle(new ProxyServerVerticle(8000, null));
-//        Thread.sleep(3000L);
-//        Vertx.vertx().deployVerticle(new AgentServer(4321, "127.0.0.1", 8000));
-        vertx.deployVerticle(new UDPProxyServerVerticle(8000, null));
+        Vertx.vertx().deployVerticle(new ProxyServerVerticle(8000));
         Thread.sleep(3000L);
-        vertx.deployVerticle(new UDPAgentServer(4321, "127.0.0.1", 8000));
+        Vertx.vertx().deployVerticle(new AgentServer(4321, "127.0.0.1", 8000));
+        Thread.sleep(3000L);
         Vertx browserVertx = Vertx.vertx();
         Thread.sleep(3000L);
 
