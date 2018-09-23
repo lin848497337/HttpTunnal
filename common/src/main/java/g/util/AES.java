@@ -13,7 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class AES {
 
-    public static boolean OPEN_ENCRYPT = false;
+    public static boolean OPEN_ENCRYPT = true;
     /**
      * 已确认
      * 加密用的Key 可以用26个字母和数字组成
