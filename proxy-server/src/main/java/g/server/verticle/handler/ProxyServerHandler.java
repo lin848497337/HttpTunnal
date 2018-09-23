@@ -1,20 +1,20 @@
 package g.server.verticle.handler;
 
-import g.proxy.FilterPipeline;
-import g.proxy.filter.*;
-import g.proxy.protocol.Message;
-import g.proxy.socket.NetSocketWrapper;
-import g.server.agent.AbstractAgentClient;
-import g.server.agent.AgentClient;
-import g.server.message.AgentMessageAction;
-import g.server.message.MessageAction;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.core.net.NetSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
+import g.proxy.FilterPipeline;
+import g.proxy.filter.DecodeFilter;
+import g.proxy.filter.DecryptFilter;
+import g.proxy.filter.UnpackFilter;
+import g.proxy.protocol.Message;
+import g.proxy.socket.NetSocketWrapper;
+import g.server.agent.AgentClient;
+import g.server.message.MessageAction;
+import g.server.message.MessageActionFactory;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.net.NetSocket;
 
 /**
  * @author chengjin.lyf on 2018/9/2 上午10:38
@@ -26,11 +26,9 @@ public class ProxyServerHandler implements Handler<NetSocket> {
 
     private Vertx vertx;
 
-    private Class<? extends AgentClient> agentClass;
 
-    public ProxyServerHandler(Vertx vertx, Class<? extends AgentClient> agentClass){
+    public ProxyServerHandler(Vertx vertx){
         this.vertx = vertx;
-        this.agentClass = agentClass;
     }
 
     @Override
@@ -40,38 +38,18 @@ public class ProxyServerHandler implements Handler<NetSocket> {
 
             NetSocketWrapper wrapper = new NetSocketWrapper(agentSocket);
             // 代表agent
-            AgentClient agentClient;
+            AgentClient agentClient = new AgentClient(wrapper, vertx);
 
-            if (agentClass == null){
-                agentClient = new AbstractAgentClient(wrapper) {
 
-                    private boolean auth = false;
-
-                    @Override
-                    public boolean isAuth() {
-                        return auth;
-                    }
-
-                    @Override
-                    public boolean checkAccountAndPassword(String account, String password) {
-                        this.auth = "admin".equalsIgnoreCase(account) && "admin_test".equalsIgnoreCase(password);
-                        return auth;
-                    }
-                };
-
-            }else {
-                Constructor<? extends AgentClient> constructor = agentClass.getConstructor(NetSocket.class);
-                agentClient = constructor.newInstance(agentSocket);
-            }
-
-            // connect real server and exchange message
-            MessageAction action = new AgentMessageAction(vertx);
 
             // agent 写入管线
             FilterPipeline inputPipeline = new FilterPipeline().addToTail(new UnpackFilter())
                 .addToTail(new DecryptFilter())
                 .addToTail(new DecodeFilter())
-                .setHandler(msg -> action.process((Message) msg, agentClient));
+                .setHandler(msg -> {
+                    MessageAction action = MessageActionFactory.getInstance().getAction(msg.getClass());
+                    action.process((Message) msg, agentClient);
+                });
 
             wrapper.handler(buffer -> {
                 try {

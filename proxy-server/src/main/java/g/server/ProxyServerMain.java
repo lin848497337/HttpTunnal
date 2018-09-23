@@ -1,9 +1,10 @@
 package g.server;
 
-import g.HAGlobalOption;
-import g.VertxContext;
+import g.server.message.BrokenBrowserMessageAction;
+import g.server.message.BrowserMessageAction;
+import g.server.message.LoginMessageAction;
+import g.server.message.MessageActionFactory;
 import g.server.verticle.ProxyServerVerticle;
-import g.server.verticle.UDPProxyServerVerticle;
 import io.vertx.core.Vertx;
 
 /**
@@ -15,8 +16,11 @@ public class ProxyServerMain {
     public static void main(String args[]){
         int proxyPort = 8000;
         Vertx vertx = Vertx.vertx();
-        VertxContext.init(vertx, new HAGlobalOption());
-        vertx.deployVerticle(new ProxyServerVerticle(proxyPort, null));
+        MessageActionFactory.getInstance().addMessageAction(new LoginMessageAction());
+        MessageActionFactory.getInstance().addMessageAction(new BrowserMessageAction());
+        MessageActionFactory.getInstance().addMessageAction(new BrokenBrowserMessageAction());
+        vertx.deployVerticle(new ProxyServerVerticle(proxyPort));
+//        VertxContext.init(vertx, new HAGlobalOption());
 //        vertx.deployVerticle(new UDPProxyServerVerticle(proxyPort, null));
 //        vertx.deployVerticle(new StaticsUnitVerticle());
     }

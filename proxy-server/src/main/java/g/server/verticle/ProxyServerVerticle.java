@@ -1,12 +1,9 @@
 package g.server.verticle;
 
-import g.server.agent.AbstractAgentClient;
-import g.server.agent.AgentClient;
-import g.server.verticle.handler.ProxyServerHandler;
-import g.server.verticle.handler.SimpleProxyServerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import g.server.verticle.handler.ProxyServerHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetServer;
@@ -24,18 +21,15 @@ public class ProxyServerVerticle extends AbstractVerticle {
 
     private static final Logger logger = LoggerFactory.getLogger(ProxyServerVerticle.class);
 
-    private Class<? extends AbstractAgentClient> agentClientClass;
-
-    public ProxyServerVerticle(int listenPort, Class<? extends AbstractAgentClient> agentClientClass) {
+    public ProxyServerVerticle(int listenPort) {
         this.listenPort = listenPort;
-        this.agentClientClass = agentClientClass;
     }
 
     @Override
     public void start() {
         Vertx vertx = getVertx();
         netServer = vertx.createNetServer();
-        netServer.connectHandler(new ProxyServerHandler(vertx, agentClientClass));
+        netServer.connectHandler(new ProxyServerHandler(vertx));
         netServer.exceptionHandler(e ->{
             logger.error("net exception", e);
         });

@@ -40,6 +40,9 @@ public class BrowserClient {
         this.browserId = browserId;
     }
 
+    public long getBrowserId() {
+        return browserId;
+    }
 
     public Message buildMsgMessage(byte[] data){
         BrowserMessage message = new BrowserMessage();
@@ -69,7 +72,6 @@ public class BrowserClient {
                 }
                 _socket.handler(buffer->{
                     Message message = buildMsgMessage(buffer.getBytes());
-                    logger.error(" response from real server size : "+buffer.length());
                     try {
                         agentClient.write(message);
                     } catch  (Exception e) {
