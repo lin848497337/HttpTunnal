@@ -20,8 +20,5 @@ public class ProxyServerMain {
         MessageActionFactory.getInstance().addMessageAction(new BrowserMessageAction());
         MessageActionFactory.getInstance().addMessageAction(new BrokenBrowserMessageAction());
         vertx.deployVerticle(new ProxyServerVerticle(proxyPort));
-//        VertxContext.init(vertx, new HAGlobalOption());
-//        vertx.deployVerticle(new UDPProxyServerVerticle(proxyPort, null));
-//        vertx.deployVerticle(new StaticsUnitVerticle());
     }
 }

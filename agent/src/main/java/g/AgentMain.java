@@ -28,7 +28,5 @@ public class AgentMain {
         for (int i=0 ; i< 10 ; i++){
             vertx.deployVerticle(new AgentServer(agentPort, proxyUrl, proxyPort));
         }
-//        vertx.deployVerticle(new UDPAgentServer(agentPort, proxyUrl, proxyPort));
-//        vertx.deployVerticle(new StaticsUnit());
     }
 }
