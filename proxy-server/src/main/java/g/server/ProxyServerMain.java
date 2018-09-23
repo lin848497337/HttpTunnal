@@ -19,7 +19,7 @@ public class ProxyServerMain {
         try{
             proxyPort = Integer.parseInt(args[0]);
         }catch (Exception e){
-            System.out.println("java -jar [proxy-server jar] listenPort");
+            System.out.println("start failed! you should start with command : \n\tjava -jar [proxy-server jar] listenPort");
             return;
         }
 
