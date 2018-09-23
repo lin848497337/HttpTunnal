@@ -9,7 +9,6 @@ web/target/*
 common/target/*
 integration-test/target/*
 proxy-server/target/*
-bin/
 gen/
 out/
 build/
