@@ -1,0 +1,9 @@
+{
+  "intervalSec": 30,
+  "userList":[
+    {
+      "username":"admin",
+      "password":"admin_test"
+    }
+  ]
+}

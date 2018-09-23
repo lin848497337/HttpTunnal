@@ -18,13 +18,17 @@ public class AgentServer extends AbstractVerticle {
 
     private String proxyServerIp;
     private int proxyServerPort;
+    private String account;
+    private String password;
 
     private Logger logger = LoggerFactory.getLogger(AgentServer.class);
 
-    public AgentServer(int agentPort, String proxyServerIp, int proxyServerPort) {
+    public AgentServer(int agentPort, String proxyServerIp, int proxyServerPort, String account, String password) {
         this.port = agentPort;
         this.proxyServerIp = proxyServerIp;
         this.proxyServerPort = proxyServerPort;
+        this.account = account;
+        this.password = password;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class AgentServer extends AbstractVerticle {
         logger.info("init agent server !");
         NetClient client = vertx.createNetClient();
         client.connect(proxyServerPort, proxyServerIp,
-                new ProxyServerConnectHandler(vertx, port));
+                new ProxyServerConnectHandler(vertx, port, account, password));
     }
 
     @Override

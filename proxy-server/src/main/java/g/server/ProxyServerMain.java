@@ -1,5 +1,6 @@
 package g.server;
 
+import g.server.account.AccountManager;
 import g.server.message.BrokenBrowserMessageAction;
 import g.server.message.BrowserMessageAction;
 import g.server.message.LoginMessageAction;
@@ -14,8 +15,16 @@ import io.vertx.core.Vertx;
 public class ProxyServerMain {
 
     public static void main(String args[]){
-        int proxyPort = 8000;
+        int proxyPort;
+        try{
+            proxyPort = Integer.parseInt(args[0]);
+        }catch (Exception e){
+            System.out.println("java -jar [proxy-server jar] listenPort");
+            return;
+        }
+
         Vertx vertx = Vertx.vertx();
+        AccountManager.getInstance().loadConfig(vertx);
         MessageActionFactory.getInstance().addMessageAction(new LoginMessageAction());
         MessageActionFactory.getInstance().addMessageAction(new BrowserMessageAction());
         MessageActionFactory.getInstance().addMessageAction(new BrokenBrowserMessageAction());

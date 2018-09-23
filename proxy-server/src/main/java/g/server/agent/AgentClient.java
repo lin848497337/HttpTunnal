@@ -8,6 +8,7 @@ import g.proxy.filter.IFilter;
 import g.proxy.filter.PackageFilter;
 import g.proxy.protocol.Message;
 import g.proxy.socket.ISocketWrapper;
+import g.server.account.AccountManager;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 
@@ -59,7 +60,8 @@ public class AgentClient implements IFilter{
 
 
     public boolean checkAccountAndPassword(String account, String password){
-        this.auth = "admin".equalsIgnoreCase(account) && "admin_test".equalsIgnoreCase(password);
+        this.auth = password != null &&
+                    password.equalsIgnoreCase(AccountManager.getInstance().getPassword(account));
         return auth;
     }
 
