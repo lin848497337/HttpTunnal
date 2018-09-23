@@ -1,17 +1,12 @@
 package g.proxy.protocol;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-
 import g.util.CommonConsts;
 import io.vertx.core.buffer.Buffer;
-import lombok.Data;
 
 /**
  * @author chengjin.lyf on 2018/9/5 上午10:07
  * @since 1.0.25
  */
-@Data
 public class LoginResponseMessage extends Message {
 
     private String token;
@@ -20,6 +15,30 @@ public class LoginResponseMessage extends Message {
 
     public LoginResponseMessage() {
         this.cmd = CommonConsts.COMMAND_RESPONSE;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public byte getResult() {
+        return result;
+    }
+
+    public void setResult(byte result) {
+        this.result = result;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     @Override

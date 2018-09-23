@@ -2,13 +2,11 @@ package g.proxy.protocol;
 
 import g.util.CommonConsts;
 import io.vertx.core.buffer.Buffer;
-import lombok.Data;
 
 /**
  * @author chengjin.lyf on 2018/9/5 上午10:22
  * @since 1.0.25
  */
-@Data
 public class BrowserMessage extends Message {
 
     private long browserId;
@@ -16,6 +14,22 @@ public class BrowserMessage extends Message {
 
     public BrowserMessage() {
         this.cmd = CommonConsts.COMMAND_MSG;
+    }
+
+    public long getBrowserId() {
+        return browserId;
+    }
+
+    public void setBrowserId(long browserId) {
+        this.browserId = browserId;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     @Override

@@ -35,7 +35,7 @@ public class FunctionTest {
         Thread.sleep(3000L);
         Vertx.vertx().deployVerticle(new ProxyServerVerticle(8000));
         Thread.sleep(3000L);
-        Vertx.vertx().deployVerticle(new AgentServer(4321, "127.0.0.1", 8000));
+        Vertx.vertx().deployVerticle(new AgentServer(4321, "127.0.0.1", 8000, "test", "test"));
         Thread.sleep(3000L);
         Vertx browserVertx = Vertx.vertx();
         Thread.sleep(3000L);

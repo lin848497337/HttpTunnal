@@ -1,13 +1,11 @@
 package g.proxy.protocol;
 
 import g.util.CommonConsts;
-import lombok.Data;
 
 /**
  * @author chengjin.lyf on 2018/9/5 上午9:56
  * @since 1.0.25
  */
-@Data
 public class LoginMessage extends Message {
 
     private String account;
@@ -16,6 +14,22 @@ public class LoginMessage extends Message {
 
     public LoginMessage() {
         this.cmd = CommonConsts.COMMAND_LOGIN;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
